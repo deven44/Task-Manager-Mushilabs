@@ -33,22 +33,30 @@ exports.getTask = async (req, res) => {
 
 exports.postTask = async (req, res) => {
   try {
-    const { description } = req.body;
+    const { title, description, taskStatus } = req.body; // destructure all needed fields
+
     if (!description) {
       return res.status(400).json({ status: false, msg: "Description of task not found" });
     }
-    const task = await Task.create({ user: req.user.id, description });
-    res.status(200).json({ task, status: true, msg: "Task created successfully.." });
-  }
-  catch (err) {
+
+    const task = await Task.create({
+      user: req.user.id,
+      title,
+      description,
+      taskStatus
+    });
+
+    res.status(200).json({ task, status: true, msg: "Task created successfully." });
+  } catch (err) {
     console.error(err);
     return res.status(500).json({ status: false, msg: "Internal Server Error" });
   }
 }
 
+
 exports.putTask = async (req, res) => {
   try {
-    const { description } = req.body;
+    const { title, description, taskStatus } = req.body; // include title and taskStatus
     if (!description) {
       return res.status(400).json({ status: false, msg: "Description of task not found" });
     }
@@ -66,14 +74,18 @@ exports.putTask = async (req, res) => {
       return res.status(403).json({ status: false, msg: "You can't update task of another user" });
     }
 
-    task = await Task.findByIdAndUpdate(req.params.taskId, { description }, { new: true });
-    res.status(200).json({ task, status: true, msg: "Task updated successfully.." });
-  }
-  catch (err) {
+    task = await Task.findByIdAndUpdate(
+      req.params.taskId, 
+      { title, description, taskStatus }, 
+      { new: true }
+    );
+
+    res.status(200).json({ task, status: true, msg: "Task updated successfully." });
+  } catch (err) {
     console.error(err);
     return res.status(500).json({ status: false, msg: "Internal Server Error" });
   }
-}
+};
 
 
 exports.deleteTask = async (req, res) => {
