@@ -19,7 +19,7 @@ const Task = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    taskStatus: "pending"
+    taskS: "pending"
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -35,7 +35,7 @@ const Task = () => {
         setFormData({
           title: data.task.title,
           description: data.task.description,
-          taskStatus: data.task.taskStatus
+          taskS: data.task.taskS
         });
       });
     }
@@ -53,7 +53,7 @@ const Task = () => {
     setFormData({
       title: task.title,
       description: task.description,
-      taskStatus: task.taskStatus
+      taskS: task.taskS
     });
   };
 
@@ -123,20 +123,20 @@ const Task = () => {
               {fieldError("description")}
             </div>
 
-            {/* taskStatus Field */}
+            {/* taskS Field */}
             <div className="mb-4">
-              <label htmlFor="taskStatus">taskStatus</label>
+              <label htmlFor="taskS">taskS</label>
               <select
-                id="taskStatus"
-                name="taskStatus"
-                value={formData.taskStatus}
+                id="taskS"
+                name="taskS"
+                value={formData.taskS}
                 onChange={handleChange}
                 className="block w-full mt-2 px-3 py-2 text-gray-600 rounded-[4px] border-2 border-gray-100 focus:border-primary transition outline-none hover:border-gray-300"
               >
                 <option value="pending">Pending</option>
                 <option value="done">Done</option>
               </select>
-              {fieldError("taskStatus")}
+              {fieldError("taskS")}
             </div>
 
             <button

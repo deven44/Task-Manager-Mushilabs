@@ -4,14 +4,34 @@ const { validateObjectId } = require("../utils/validation");
 
 exports.getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find({ user: req.user.id });
-    res.status(200).json({ tasks, status: true, msg: "Tasks found successfully.." });
-  }
-  catch (err) {
+    const { search = "", status = "all", page = 1, limit = 5 } = req.query;
+    const query = { user: req.user.id };
+
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    if (status !== "all") {
+      query.taskStatus = status;
+    }
+
+    const tasks = await Task.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit));
+
+    const total = await Task.countDocuments(query);
+
+    res.status(200).json({ tasks, total, status: true, msg: "Tasks fetched successfully." });
+  } catch (err) {
     console.error(err);
-    return res.status(500).json({ status: false, msg: "Internal Server Error" });
+    res.status(500).json({ status: false, msg: "Internal Server Error" });
   }
-}
+};
+
 
 exports.getTask = async (req, res) => {
   try {
