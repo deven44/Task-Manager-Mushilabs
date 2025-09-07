@@ -11,11 +11,11 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please enter your email"],
     trim: true,
     unique: true
-  },
+  },    
   password: {
     type: String,
     required: [true, "Please enter your password"],
-  },
+  },  
   joiningTime: {
     type: Date,
     default: Date.now

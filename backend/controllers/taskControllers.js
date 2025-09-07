@@ -12,16 +12,16 @@ exports.getTasks = async (req, res) => {
         { title: { $regex: search, $options: "i" } },
         { description: { $regex: search, $options: "i" } }
       ];
-    }
+    }                
 
     if (status !== "all") {
       query.taskStatus = status;
-    }
+    }                           
 
     const tasks = await Task.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 }) 
       .skip((page - 1) * limit)
-      .limit(Number(limit));
+      .limit(Number(limit));             
 
     const total = await Task.countDocuments(query);
 
@@ -53,7 +53,7 @@ exports.getTask = async (req, res) => {
 
 exports.postTask = async (req, res) => {
   try {
-    const { title, description, taskStatus } = req.body; // destructure all needed fields
+    const { title, description, taskStatus, priority } = req.body; // destructure all needed fields
 
     if (!description) {
       return res.status(400).json({ status: false, msg: "Description of task not found" });
@@ -63,7 +63,8 @@ exports.postTask = async (req, res) => {
       user: req.user.id,
       title,
       description,
-      taskStatus
+      taskStatus,
+      priority
     });
 
     res.status(200).json({ task, status: true, msg: "Task created successfully." });
@@ -76,7 +77,7 @@ exports.postTask = async (req, res) => {
 
 exports.putTask = async (req, res) => {
   try {
-    const { title, description, taskStatus } = req.body; // include title and taskStatus
+    const { title, description, taskStatus, priority } = req.body; 
     if (!description) {
       return res.status(400).json({ status: false, msg: "Description of task not found" });
     }
@@ -96,7 +97,7 @@ exports.putTask = async (req, res) => {
 
     task = await Task.findByIdAndUpdate(
       req.params.taskId, 
-      { title, description, taskStatus }, 
+      { title, description, taskStatus, priority}, 
       { new: true }
     );
 

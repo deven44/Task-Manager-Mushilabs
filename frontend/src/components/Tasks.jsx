@@ -11,7 +11,7 @@ const Tasks = ({ search, filterStatus }) => {
   const [totalTasks, setTotalTasks] = useState(0);
   const [page, setPage] = useState(1);
   const [fetchData, { loading }] = useFetch();
-  const limit = 5;
+  const limit = 3;
 
   const fetchTasks = useCallback(() => {
     let url = `/tasks?search=${encodeURIComponent(search)}&status=${filterStatus}&page=${page}&limit=${limit}`;
@@ -30,7 +30,7 @@ const Tasks = ({ search, filterStatus }) => {
   const handleDelete = (id) => {
     const config = { url: `/tasks/${id}`, method: "delete", headers: { Authorization: authState.token } };
     fetchData(config).then(() => fetchTasks());
-  }
+  };
 
   const totalPages = Math.ceil(totalTasks / limit);
 
@@ -49,23 +49,34 @@ const Tasks = ({ search, filterStatus }) => {
             tasks.map((task, index) => {
               const globalIndex = (page - 1) * limit + index + 1;
               return (
-                <div key={task._id} className='bg-white my-4 p-4 text-gray-600 rounded-md shadow-md'>
+                <div key={task._id} className='bg-white my-4 p-8 text-gray-600 rounded-md shadow-md'>
                   <div className='flex items-center mb-2'>
-                    <span className='font-medium'>Task #{globalIndex}: {task.title}</span>
+                    <span className='font-medium'>Task {globalIndex}: {task.title}</span>
+                    
                     <span className={`ml-4 px-2 py-1 rounded text-white text-sm ${
-                      task.taskStatus === "done" ? "bg-green-400" :
-                      task.taskStatus === "pending" ? "bg-red-400" :
-                      "bg-gray-500"
+                      task.taskStatus === "done" ? "bg-gray-600" :
+                      task.taskStatus === "pending" ? "bg-gray-600" :
+                      "bg-gray-600"
                     }`}>
-                      {task.taskStatus}
+                      {"Status: "}{task.taskStatus}
                     </span>
+
+                    <span className={`ml-2 px-2 py-1 rounded text-white text-sm ${
+                      task.priority === "high" ? "bg-red-600" :
+                      task.priority === "medium" ? "bg-yellow-500" :
+                      task.priority === "low" ? "bg-green-500" :
+                      "bg-gray-400"
+                    }`}>
+                      {"Priority: "}{task.priority}
+                    </span>
+
                     <Tooltip text={"Edit this task"} position={"top"}>
-                      <Link to={`/tasks/${task._id}`} className='ml-auto mr-2 text-green-600 cursor-pointer'>
+                      <Link to={`/tasks/${task._id}`} className='ml-auto mr-4 text-gray-600 cursor-pointer'>
                         <i className="fa-solid fa-pen"></i>
                       </Link>
                     </Tooltip>
                     <Tooltip text={"Delete this task"} position={"top"}>
-                      <span className='text-red-500 cursor-pointer' onClick={() => handleDelete(task._id)}>
+                      <span className='text-gray-500 cursor-pointer' onClick={() => handleDelete(task._id)}>
                         <i className="fa-solid fa-trash"></i>
                       </span>
                     </Tooltip>
@@ -73,11 +84,10 @@ const Tasks = ({ search, filterStatus }) => {
                   <div className='whitespace-pre mb-2'>{task.description}</div>
                   <div className='text-sm text-gray-400'>Created on: {new Date(task.createdAt).toLocaleString()}</div>
                 </div>
-              )
+              );
             })
-            
           )}
-          
+
           {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="flex justify-center gap-2 mt-4">
@@ -95,7 +105,7 @@ const Tasks = ({ search, filterStatus }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default Tasks;

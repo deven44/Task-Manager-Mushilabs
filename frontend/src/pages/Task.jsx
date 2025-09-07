@@ -19,12 +19,13 @@ const Task = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    taskS: "pending"
+    taskStatus: "pending",
+    priority: "medium"
   });
   const [formErrors, setFormErrors] = useState({});
 
   useEffect(() => {
-    document.title = mode === "add" ? "Add Task" : "Edit Task";
+   document.title = mode === "add" ? "Add Task" : "Edit Task";
   }, [mode]);
 
   useEffect(() => {
@@ -33,13 +34,14 @@ const Task = () => {
       fetchData(config, { showSuccessToast: false }).then((data) => {
         setTask(data.task);
         setFormData({
-          title: data.task.title,
+          title: data.task.title,            
           description: data.task.description,
-          taskS: data.task.taskS
+          taskStatus: data.task.taskStatus,  
+          priority: data.task.priority        
         });
       });
     }
-  }, [mode, authState, taskId, fetchData]);
+  }, [mode, authState.token, taskId, fetchData]);
 
   const handleChange = e => {
     setFormData({
@@ -53,7 +55,8 @@ const Task = () => {
     setFormData({
       title: task.title,
       description: task.description,
-      taskS: task.taskS
+      taskStatus: task.taskStatus,
+      priority: task.priority
     });
   };
 
@@ -70,7 +73,7 @@ const Task = () => {
     if (mode === "add") {
       const config = { url: "/tasks", method: "post", data: formData, headers: { Authorization: authState.token } };
       fetchData(config).then(() => {
-        navigate("/");
+      navigate("/");
       });
     } else {
       const config = { url: `/tasks/${taskId}`, method: "put", data: formData, headers: { Authorization: authState.token } };
@@ -123,20 +126,37 @@ const Task = () => {
               {fieldError("description")}
             </div>
 
-            {/* taskS Field */}
+            {/* Task Status Field */}
             <div className="mb-4">
-              <label htmlFor="taskS">taskS</label>
+              <label htmlFor="taskStatus">Task Status</label>
               <select
-                id="taskS"
-                name="taskS"
-                value={formData.taskS}
+                id="taskStatus"
+                name="taskStatus"
+                value={formData.taskStatus}
                 onChange={handleChange}
                 className="block w-full mt-2 px-3 py-2 text-gray-600 rounded-[4px] border-2 border-gray-100 focus:border-primary transition outline-none hover:border-gray-300"
               >
                 <option value="pending">Pending</option>
                 <option value="done">Done</option>
               </select>
-              {fieldError("taskS")}
+              {fieldError("taskStatus")}
+            </div>
+
+            {/* Priority Field */}
+            <div className="mb-4">
+              <label htmlFor="priority">Priority</label>
+              <select
+                id="priority"
+                name="priority"
+                value={formData.priority}
+                onChange={handleChange}
+                className="block w-full mt-2 px-3 py-2 text-gray-600 rounded-[4px] border-2 border-gray-100 focus:border-primary transition outline-none hover:border-gray-300"
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+              {fieldError("priority")}
             </div>
 
             <button
